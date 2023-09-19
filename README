@@ -1,0 +1,42 @@
+步骤：
+1、主机创建用户 www、mysql、redis
+groupadd -g 1000 www
+useradd -u 1000 -s /usr/sbin/nologin -g www www
+
+groupadd -g 1001 mysql
+useradd -u 1001 -s /usr/sbin/nologin -g mysql mysql
+
+groupadd -g 1002 www
+useradd -u 1002 -s /usr/sbin/nologin -g redis redis
+
+
+2、主机创建目录
+~/www/data   存放MySQL、Elastic、RabbitMQ数据
+    ~/www/data/mysql
+    ~/www/data/rabbitmq
+    ~/www/data/redis
+~/www/htdocs 项目代码
+~/www/log    存放日志
+    ~/www/log/php
+    ~/www/log/mysql
+    ~/www/log/nginx
+
+
+文档
+https://www.youcl.com/info/3273
+https://itlanyan.com/php-docker-kdevtmpfsi-mining-virus/
+
+
+安装步骤
+执行 ./install.sh
+
+访问地址
+http://localhost        项目根目录
+http://localhost:8080   PHPMyAdmin地址
+http://localhost:15672  RabbitMQ管理界面
+
+脚本简介
+./install.sh                        安装软件
+./uninstall.sh                      卸载软件及镜像
+./service.sh start|stop|restart     开始或结束运行
+./ssh.sh [container_name]           进入某个容器，默认为PHP容器

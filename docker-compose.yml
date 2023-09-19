@@ -1,0 +1,120 @@
+services:
+
+  nginx:
+      build: ./nginx
+      container_name: nginx
+      env_file:
+        - .env
+      #端口 主机：容器
+      ports:
+        # - "80:80"
+        - "80:80"
+        - "18080:18080"
+      links:
+        - "php"
+      volumes:
+        - ${WWW_DIR}/htdocs:/www/htdocs
+        - ${WWW_DIR}/log/nginx:/www/log/nginx
+      networks:
+        - app-network
+
+  php:
+      build: ./php
+      container_name: php
+      env_file:
+        - .env      
+      ports:
+        # - "9000:9000"
+        - "9999:9999"
+        - "9502:9502"
+      depends_on:
+        - mysql
+      links:
+        - "mysql"
+#        - "memcache"
+        - "redis"
+#        - "rabbitmq"
+      volumes:
+        - ${WWW_DIR}/htdocs:/www/htdocs
+        - ${WWW_DIR}/log/php:/www/log/php
+      networks:
+        - app-network
+
+  mysql:
+      build: ./mysql
+      container_name: mysql
+      env_file:
+        - .env
+      ports:
+        - "12306:12306"
+        #端口 主机：容器
+      volumes:
+        - ${WWW_DIR}/data/mysql:/var/lib/mysql
+      environment:
+        # - MYSQL_USER=test
+        - MYSQL_ROOT_PASSWORD=test_123456
+      networks:
+        - app-network
+
+#  memcache:
+#      build: ./memcache
+#      container_name: memcache
+#      env_file:
+#        - .env
+#      ports:
+#        - "11211:11211"
+#      networks:
+#        - app-network
+
+  redis:
+      build: ./redis
+      container_name: redis
+      env_file:
+        - .env
+      ports:
+        - "12379:12379"
+        #端口 主机：容器
+      volumes:
+        - ${WWW_DIR}/data/redis:/var/lib/redis
+      networks:
+        - app-network
+
+# phpmyadmin:
+#     image: phpmyadmin
+#     container_name: phpmyadmin
+#     env_file:
+#       - .env
+#     ports:
+#       -  "10086:80"
+#     links:
+#       - "mysql"
+#       - "php"
+#     environment:
+#       - PMA_ARBITRARY=1
+#       - PMA_HOST=mysql
+#       - PMA_PORT=12306
+#      networks:
+#        - app-network
+
+
+#  rabbitmq:
+#      image: rabbitmq:3-management
+#      container_name: rabbitmq
+#      env_file:
+#        - .env
+#      hostname: rabbitmq
+#      ports:
+#        - "5672:5672"
+#        - "15672:15672"
+#      volumes:
+#        - ${WWW_DIR}/data/rabbitmq/mnesia/rabbitmq:/var/lib/rabbitmq/mnesia/rabbitmq
+#      environment:
+#        - HOSTNAME=rabbitmq
+#        - RABBITMQ_NODENAME=rabbitmq
+#      networks:
+#        - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
